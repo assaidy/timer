@@ -5,7 +5,7 @@
 
 ### Build
 ```sh
-git clone https://github.com/ahmad-alsaidy/timer
+git clone https://github.com/assaidy/timer
 cd timer
 ./build.sh
 ```
