@@ -5,7 +5,7 @@
 
 ### Build
 ```sh
-git clone https://github.com/assaidy/timer
+git clone https://github.com/assaidy/timer.git
 cd timer
 ./build.sh
 ```
@@ -21,3 +21,7 @@ $ timer [DURATION]
 ```
 
 ### Demo:
+
+
+https://github.com/assaidy/timer/assets/111336676/05ed95f0-684c-4c85-96dc-294122618ade
+
