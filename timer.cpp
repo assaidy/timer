@@ -126,7 +126,7 @@ public:
                     clear();
                 }
             }
-            else if (argp.get_timer_type() == "down" && is_running) {
+            else if (argp.get_timer_type() == "down") {
                 our_counter.reset(total_seonds - 1);
                 while (our_counter.cur() >= 0) {
                     print_centered(stdscr, std::vector<std::string>{
@@ -143,8 +143,7 @@ public:
 
                     clear();
                 }
-                if (is_running)
-                    play_bell();
+                play_bell();
             }
         }
         endwin();
