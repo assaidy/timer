@@ -20,6 +20,12 @@ $ timer [DURATION]
          DURATION:  $s
 ```
 
+### keybindings:
+| Key | Function |
+| --- | --- |
+| `<space>` | Toggle Pause |
+| `q` | Quit |
+
 ### Demo:
 
 

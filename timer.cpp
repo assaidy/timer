@@ -1,12 +1,11 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Audio/Music.hpp>
+#include <curses.h>
 #include <ncurses.h>
 #include <thread>
 #include <vector>
 #include <regex>
 #include <iomanip>
-
-// TODO: add keybindings
 
 #include "./include/Counter-API/counter.h"
 #include "./include/progress-bar/progress.h"
@@ -20,6 +19,8 @@ private:
     long long total_seonds;
     int argc;
     char const** argv;
+    bool is_running {true};
+    bool is_paused {false};
 
     void play_bell() {
         sf::Music music;
@@ -69,6 +70,28 @@ private:
         }
     }
 
+    void toggle_pause() {
+        is_paused = !is_paused;
+    }
+
+    void quit() {
+        endwin();
+        exit(0);
+    }
+
+    void listen_to_keyboard() {
+        cbreak();
+        char ch;
+        while(true) {
+            ch = getch();
+            refresh();
+            switch (ch) {
+                case ' ': toggle_pause(); break;
+                case 'q': quit(); break;
+            }
+        }
+    }
+
 public:
     Timer(int argc, char const** argv) : argc(argc), argv(argv) {
         pBar.set_width(50).set_shape_done("#").set_shape_remaining("-");
@@ -76,13 +99,15 @@ public:
 
     void start() {
         if (!argp.parse_args(argc, argv)) {
-            printf("[Error] invalid argument.\n");
+            printf("[Error] invalid argument.\n\n");
             help_msg();
         }
         else {
             total_seonds = argp.get_toal_seconds();
 
-            setlocale(LC_ALL, "");
+            std::thread t(&Timer::listen_to_keyboard, this);
+            t.detach();
+
             initscr();
             noecho();
             curs_set(0);
@@ -94,25 +119,35 @@ public:
                     refresh();
                     our_counter.inc();
                     std::this_thread::sleep_for(std::chrono::seconds(1));
+
+                    while (is_paused) {
+                    }
+
                     clear();
                 }
             }
-            else if (argp.get_timer_type() == "down") {
+            else if (argp.get_timer_type() == "down" && is_running) {
                 our_counter.reset(total_seonds - 1);
                 while (our_counter.cur() >= 0) {
                     print_centered(stdscr, std::vector<std::string>{
                         total_seconds_to_full(our_counter.cur()),
-                            pBar.generate_bar(total_seonds, total_seonds - our_counter.cur()),
+                        pBar.generate_bar(total_seonds, total_seonds - our_counter.cur()),
                     });
                     refresh();
-                    our_counter.dec();
+                    if (!is_paused)
+                        our_counter.dec();
                     std::this_thread::sleep_for(std::chrono::seconds(1));
+
+                    while (is_paused) {
+                    }
+
                     clear();
                 }
-                play_bell();
+                if (is_running)
+                    play_bell();
             }
-            endwin();
         }
+        endwin();
     }
 };
 
