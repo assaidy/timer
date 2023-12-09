@@ -7,9 +7,9 @@
 #include <regex>
 #include <iomanip>
 
-#include "./include/Counter-API/counter.h"
-#include "./include/progress-bar/progress.h"
-#include "./include/argparser/argparser.h"
+#include "./include/counter.h"
+#include "./include/progress.h"
+#include "./include/argparser.h"
 
 class Timer {
 private:
