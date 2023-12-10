@@ -19,8 +19,8 @@ private:
     long long total_seonds;
     int argc;
     char const** argv;
-    bool is_running {true};
-    bool is_paused {false};
+    bool is_running{ true };
+    bool is_paused{ false };
 
     void play_bell() {
         sf::Music music;
@@ -68,6 +68,9 @@ private:
             mvwprintw(win, center_row, adjust_col, "%s", text.at(i).c_str());
             wattroff(win, A_BOLD);
         }
+
+        while (is_paused) {
+        }
     }
 
     void toggle_pause() {
@@ -82,12 +85,12 @@ private:
     void listen_to_keyboard() {
         cbreak();
         char ch;
-        while(true) {
+        while (true) {
             ch = getch();
             refresh();
             switch (ch) {
-                case ' ': toggle_pause(); break;
-                case 'q': quit(); break;
+            case ' ': toggle_pause(); break;
+            case 'q': quit(); break;
             }
         }
     }
@@ -120,8 +123,8 @@ public:
                     our_counter.inc();
                     std::this_thread::sleep_for(std::chrono::seconds(1));
 
-                    while (is_paused) {
-                    }
+                    // while (is_paused) {
+                    // }
 
                     clear();
                 }
@@ -131,15 +134,14 @@ public:
                 while (our_counter.cur() >= 0) {
                     print_centered(stdscr, std::vector<std::string>{
                         total_seconds_to_full(our_counter.cur()),
-                        pBar.generate_bar(total_seonds, total_seonds - our_counter.cur()),
+                            pBar.generate_bar(total_seonds, total_seonds - our_counter.cur()),
                     });
                     refresh();
-                    if (!is_paused)
-                        our_counter.dec();
+                    our_counter.dec();
                     std::this_thread::sleep_for(std::chrono::seconds(1));
 
-                    while (is_paused) {
-                    }
+                    // while (is_paused) {
+                    // }
 
                     clear();
                 }
