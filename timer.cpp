@@ -97,7 +97,7 @@ private:
 
 public:
     Timer(int argc, char const** argv) : argc(argc), argv(argv) {
-        pBar.set_width(50).set_shape_done("#").set_shape_remaining("-");
+        pBar.set_width(50).set_shape_done("#").set_shape_remaining(" ");
     }
 
     void start() {
