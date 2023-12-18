@@ -56,7 +56,7 @@ private:
         return oss.str();
     }
 
-    void print_centered(WINDOW* win, std::vector<std::string> text) {
+    void print_centered(WINDOW* win, const std::vector<std::string>& text) {
         for (int i = 0; i < (int)text.size(); i++) {
             int center_col = win->_maxx / 2;
             int half_length = text.at(i).length() / 2;
