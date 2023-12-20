@@ -56,18 +56,16 @@ private:
         return oss.str();
     }
 
-    void print_centered(WINDOW* win, const std::vector<std::string>& text) {
-        for (int i = 0; i < (int)text.size(); i++) {
-            int center_col = win->_maxx / 2;
-            int half_length = text.at(i).length() / 2;
-            int adjust_col = center_col - half_length;
-            int center_row = (win->_maxy - (int)text.size()) / 2 + i;
+    void print_centered(WINDOW* win, int y_displacement, const std::string& text, int char_size = 1) {
+        int center_col = win->_maxx / 2;
+        int half_length = (int)text.size() / char_size / 2;
+        int adjust_col = center_col - half_length;
+        int center_row = win->_maxy / 2 + y_displacement;
 
-            mvwprintw(win, center_row, adjust_col, "%s", text.at(i).c_str());
-            wattron(win, A_BOLD);
-            mvwprintw(win, center_row, adjust_col, "%s", text.at(i).c_str());
-            wattroff(win, A_BOLD);
-        }
+        mvwprintw(win, center_row, adjust_col, "%s", text.c_str());
+        wattron(win, A_BOLD);
+        mvwprintw(win, center_row, adjust_col, "%s", text.c_str());
+        wattroff(win, A_BOLD);
 
         while (is_paused) {
         }
@@ -97,7 +95,7 @@ private:
 
 public:
     Timer(int argc, char const** argv) : argc(argc), argv(argv) {
-        pBar.set_width(50).set_shape_done("#").set_shape_remaining(" ");
+        pBar.set_width(50).set_shape_done("█").set_shape_remaining("░");
     }
 
     void start() {
@@ -118,7 +116,8 @@ public:
 
             if (argp.get_timer_type() == "up") {
                 while (true) {
-                    print_centered(stdscr, std::vector<std::string>{ total_seconds_to_full(our_counter.cur()) });
+                    // print_centered(stdscr, std::vector<std::string>{ total_seconds_to_full(our_counter.cur()) });
+                    print_centered(stdscr, 0, total_seconds_to_full(our_counter.cur()));
                     refresh();
                     our_counter.inc();
                     std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -132,10 +131,9 @@ public:
             else if (argp.get_timer_type() == "down") {
                 our_counter.reset(total_seonds - 1);
                 while (our_counter.cur() >= 0) {
-                    print_centered(stdscr, std::vector<std::string>{
-                        total_seconds_to_full(our_counter.cur()),
-                            pBar.generate_bar(total_seonds, total_seonds - our_counter.cur()),
-                    });
+                    print_centered(stdscr, -1, total_seconds_to_full(our_counter.cur()));
+                    refresh();
+                    print_centered(stdscr, 1, pBar.generate_bar(total_seonds, total_seonds - our_counter.cur(), false), pBar.get_shape_size());
                     refresh();
                     our_counter.dec();
                     std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -154,6 +152,7 @@ public:
 
 int main(int argc, char const** argv)
 {
+    setlocale(LC_CTYPE, "");
     Timer app(argc, argv);
     app.start();
 
