@@ -29,9 +29,6 @@ $ timer [DURATION]
 ### Demo:
 
 
-https://github.com/assaidy/timer/assets/111336676/05ed95f0-684c-4c85-96dc-294122618ade
-
-
 
 https://github.com/assaidy/timer/assets/111336676/a1eeda52-6df7-44b8-87c6-14fc0b4faea8
 
