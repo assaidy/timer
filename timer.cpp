@@ -56,16 +56,16 @@ private:
         return oss.str();
     }
 
-    void print_centered(WINDOW* win, int y_displacement, const std::string& text, int char_size = 1) {
+    void print_centered(WINDOW* win, int y_displacement, const std::string& text, int char_size = 1, int style = A_NORMAL) {
         int center_col = win->_maxx / 2;
         int half_length = (int)text.size() / char_size / 2;
         int adjust_col = center_col - half_length;
         int center_row = win->_maxy / 2 + y_displacement;
 
         mvwprintw(win, center_row, adjust_col, "%s", text.c_str());
-        wattron(win, A_BOLD);
+        wattron(win, style);
         mvwprintw(win, center_row, adjust_col, "%s", text.c_str());
-        wattroff(win, A_BOLD);
+        wattroff(win, style);
 
         while (is_paused) {
         }
@@ -116,14 +116,10 @@ public:
 
             if (argp.get_timer_type() == "up") {
                 while (true) {
-                    // print_centered(stdscr, std::vector<std::string>{ total_seconds_to_full(our_counter.cur()) });
                     print_centered(stdscr, 0, total_seconds_to_full(our_counter.cur()));
                     refresh();
                     our_counter.inc();
                     std::this_thread::sleep_for(std::chrono::seconds(1));
-
-                    // while (is_paused) {
-                    // }
 
                     clear();
                 }
@@ -131,18 +127,16 @@ public:
             else if (argp.get_timer_type() == "down") {
                 our_counter.reset(total_seonds - 1);
                 while (our_counter.cur() >= 0) {
-                    print_centered(stdscr, -1, total_seconds_to_full(our_counter.cur()));
-                    refresh();
-                    print_centered(stdscr, 1, pBar.generate_bar(total_seonds, total_seonds - our_counter.cur(), false), pBar.get_shape_size());
+                    print_centered(stdscr, -2, total_seconds_to_full(our_counter.cur()), 1, A_BOLD);
+                    print_centered(stdscr, 0, pBar.generate_bar(total_seonds, total_seonds - our_counter.cur(), false), pBar.get_shape_size());
+                    print_centered(stdscr, 2, "session: " + total_seconds_to_full(argp.get_toal_seconds()), 1, A_ITALIC + A_DIM);
                     refresh();
                     our_counter.dec();
                     std::this_thread::sleep_for(std::chrono::seconds(1));
 
-                    // while (is_paused) {
-                    // }
-
                     clear();
                 }
+
                 play_bell();
             }
         }
